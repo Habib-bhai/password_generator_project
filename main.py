@@ -2,7 +2,9 @@ import re
 import streamlit as st
 import random
 import string
+from google import genai
 
+client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 def check_password_strength(password):
     score = 0
@@ -118,6 +120,20 @@ with tab2:
 
             with col_2_password_result:
                 st.subheader(st.session_state.password_result)
+         
+        
+    st.header("Analyze the Generated password with AI")
+    st.button("Start analyzing", key="password_analyze")
+    
+    if st.session_state.password_analyze:
+        response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=f"you are an security expert now, who specializes in password security management. I'll be giving you password that my password generator is generating you have to evaluate that password based on security standards protocols and ethics, you have to check all the requirements of a Very strong password, which has a high entropy. And also you have to provide feedback on, if there is scope of improvement in the password or not. Here is the password{st.session_state.password_result}, and keep in mind you have to be in the limit of 250 words and you can start with sentence like 'OK, GREAT LETS ANALYZE PASSWORD' ",
+        )
+        
+        
+        st.write(response.text)
+            
 
 
 
